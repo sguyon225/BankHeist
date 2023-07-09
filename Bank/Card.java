@@ -7,10 +7,10 @@ public class Card {
         this.name="None";
     }
 
-    public String getName() {
+    public String getCard() {
         return name;
     }
-    public void setName(String name) {
+    public void setCard(String name) {
         this.name = name;
     }
 }

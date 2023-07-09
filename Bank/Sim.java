@@ -5,6 +5,7 @@ import java.util.Random;
 public class Sim {
     static int VAULT=0;
     static int ALARM=0;
+    static Random num=new Random();
 
     public static Card[] makeVault(){
         Card[] vault=new Card[40];
@@ -13,21 +14,19 @@ public class Sim {
             vault[i]=card;
         }
 
-        Random num=new Random();
-
         int cash=0;
         while(cash<10){
             int spot=num.nextInt(40);
-            if(vault[spot].getName()=="None"){
-                vault[spot].setName("Cash");
+            if(vault[spot].getCard()=="None"){
+                vault[spot].setCard("Cash");
                 cash++;
             }
         }
         int dye=0;
         while(dye<2){
             int spot=num.nextInt(40);
-            if(vault[spot].getName()=="None"){
-                vault[spot].setName("Dye");
+            if(vault[spot].getCard()=="None"){
+                vault[spot].setCard("Dye");
                 dye++;
             }
         }
@@ -41,13 +40,11 @@ public class Sim {
             alarm[i]=card;
         }
 
-        Random num=new Random();
-
         int moving=0;
         while(moving<3){
             int spot=num.nextInt(25);
-            if(alarm[spot].getName()=="None"){
-                alarm[spot].setName("LET'S GET MOVING");
+            if(alarm[spot].getCard()=="None"){
+                alarm[spot].setCard("LET'S GET MOVING");
                 moving++;
             }
         }
@@ -55,8 +52,8 @@ public class Sim {
         int hold=0;
         while(hold<2){
             int spot=num.nextInt(25);
-            if(alarm[spot].getName()=="None"){
-                alarm[spot].setName("HOLD IT RIGHT THERE");
+            if(alarm[spot].getCard()=="None"){
+                alarm[spot].setCard("HOLD IT RIGHT THERE");
                 hold++;
             }
         }
@@ -64,8 +61,8 @@ public class Sim {
         int take=0;
         while(take<2){
             int spot=num.nextInt(25);
-            if(alarm[spot].getName()=="None"){
-                alarm[spot].setName("I'LL TAKE THAT");
+            if(alarm[spot].getCard()=="None"){
+                alarm[spot].setCard("I'LL TAKE THAT");
                 take++;
             }
         }
@@ -91,12 +88,31 @@ public class Sim {
         return card;
     }
 
+    public static Player[] makeTable(int players){
+        Player[] table=new Player[players];
+        for (int i=0; i<table.length; i++) {
+            Player player=new Player();
+            table[i]=player;
+        }
+
+        int agents=0;
+        while(agents<2){
+            int spot=num.nextInt(table.length);
+            if(table[spot].getRole()=="Crew"){
+                table[spot].setRole("Agent");
+                agents++;
+            }
+        }
+
+        return table;
+    }
+
     public static void main(String[] args) {
         //If 5-6, 3 turns
         //If 7-8, 2 turns
         Card[] vault=makeVault();
         Card[] alarm=makeAlarm();
-        System.out.println(draw(vault).getName());
-        System.out.println(draw(alarm).getName());
+        Player[] table=makeTable(5);
+        
     }
 }
