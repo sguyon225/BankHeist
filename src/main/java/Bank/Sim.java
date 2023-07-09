@@ -17,7 +17,7 @@ public class Sim {
         int dye=0;
         while(dye<2){
             Card card=new Card();
-            card.setType("Cash");
+            card.setType("Dye");
             vault.add(card);
             dye++;
         }
@@ -45,7 +45,6 @@ public class Sim {
             card.setType("HOLD IT RIGHT THERE");
             alarm.add(card);
             moving++;
-
         }
 
         int hold=0;
@@ -75,37 +74,72 @@ public class Sim {
 
     public static Card draw(ArrayList<Card> deck){
         Card card=deck.remove(0);
-
         return card;
     }
 
-    // public static Player[] makeTable(int players){
-    //     Player[] table=new Player[players];
-    //     for (int i=0; i<table.length; i++) {
-    //         Player player=new Player();
-    //         table[i]=player;
-    //     }
-
-    //     int agents=0;
-    //     while(agents<2){
-    //         int spot=num.nextInt(table.length);
-    //         if(table[spot].getRole()=="Crew"){
-    //             table[spot].setRole("Agent");
-    //             agents++;
-    //         }
-    //     }
-        
-    //     return table;
-    // }
-
-    public static void crew(ArrayList<Card> vault, ArrayList<Card> alarm){
-        Card a=draw(alarm);
-        // Card v=draw(vault);
-
-        if(a.getType()=="LET'S GET MOVING"){
-
+    public static ArrayList<Player> makeTable(int players){
+        ArrayList<Player> table=new ArrayList<Player>(players);
+        for (int i=0; i<players; i++) {
+            Player player=new Player();
+            table.add(player);
         }
 
+        table.get(0).setRole("Agent");
+        table.get(1).setRole("Agent");
+        
+        Collections.shuffle(table);
+        return table;
+    }
+
+    public static void crewTurn(ArrayList<Card> vault, ArrayList<Card> alarm, ArrayList<Player> table, Van van){
+        Card a=draw(alarm);
+        Card v=null;
+        Card e=null;
+
+        if(a.getType()=="LET'S GET MOVING"){
+            boolean cash=false;
+            int i=0;
+            while(cash=false){
+                Card card=vault.get(i);
+                if(card.getType()=="Cash"){
+                    vault.remove(i);
+                    van.addBag();
+                    cash=true;
+                }
+                i++;
+            }
+        }else if(a.getType()=="HOLD IT RIGHT THERE"){
+            int bags=0;
+            int holder=0;
+            int i=0;
+            for (Player player : table) {
+                if(player.getRole()=="Agent"){
+                    if(player.getBags()>bags){
+                        bags=player.getBags();
+                        holder=i;
+                    }
+                    
+                }
+                i++;
+            }
+            if(bags>0){
+                for (int j=0; j<bags; j++) {
+                    van.addBag();
+                }
+                table.get(holder).clearBags();
+            }
+            v=draw(vault);
+
+        }else if(a.getType()=="I'LL TAKE THAT"){
+            v=draw(vault);
+            e=draw(vault);
+        }else{
+            v=draw(vault);
+        }
+
+        if(v.getType()=="Cash"){
+            van.addBag();
+        }
     }
 
     public static void main(String[] args) {
@@ -113,16 +147,12 @@ public class Sim {
         //If 7-8, 2 turns
         ArrayList<Card> vault=makeVault();
         ArrayList<Card> alarm=makeAlarm();
-        // Player[] table=makeTable(5);
+        ArrayList<Player> table=makeTable(5);
+        Van van=new Van();
 
-        // for (Player player : table) {
-        //     System.out.println(player.getRole());
-        // }System.out.println("\n\n VAULT");
-        for (Card card : vault) {
-            System.out.println(card.getType());
-        }System.out.println("\n\n ALARM");
-        for (Card card : alarm) {
-            System.out.println(card.getType());
-        }
+        table.get(0).addBag();
+        table.get(1).addBag();
+        table.get(1).addBag();
+        crewTurn(vault, alarm, table, van);
     }
 }

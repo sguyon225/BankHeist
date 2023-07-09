@@ -21,6 +21,9 @@ public class Player {
     public void addBag() {
         this.bags+=1;
     }
+    public void clearBags(){
+        this.bags=0;
+    }
 
     
 }
