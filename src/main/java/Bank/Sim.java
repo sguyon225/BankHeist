@@ -5,8 +5,11 @@ import java.util.Collections;
 /*
  * Not Accounted for:
  *      Guilty Conscience attribute adding another agent + if it's taken away
+ *      If guilty Conc who does agent give/take cards from
  */
 public class Sim {
+    static int CASH=10;
+
     public static ArrayList<Card> makeVault(){
         ArrayList<Card> vault=new ArrayList<>(40);
 
@@ -37,10 +40,6 @@ public class Sim {
 
     public static ArrayList<Card> makeAlarm(){
         ArrayList<Card> alarm=new ArrayList<>(25);
-        for (int i=0; i<alarm.size(); i++) {
-            Card card=new Card();
-            alarm.set(i,card);
-        }
 
         int moving=0;
         while(moving<3){
@@ -49,7 +48,6 @@ public class Sim {
             alarm.add(card);
             moving++;
         }
-
         int hold=0;
         while(hold<2){
             Card card=new Card();
@@ -100,16 +98,19 @@ public class Sim {
         Card e=null;
 
         if(a.getType()=="LET'S GET MOVING"){
-            boolean cash=false;
-            int i=0;
-            while(cash=false){
-                Card card=vault.get(i);
-                if(card.getType()=="Cash"){
-                    vault.remove(i);
-                    van.addBag();
-                    cash=true;
+            if(CASH>0){
+                boolean cash=false;
+                int i=0;
+                while(cash==false){
+                    Card card=vault.get(i);
+                    if(card.getType()=="Cash"){
+                        vault.remove(i);
+                        van.addBag();
+                        CASH--;
+                        cash=true;
+                    }
+                    i++;
                 }
-                i++;
             }
         }else if(a.getType()=="HOLD IT RIGHT THERE"){
             int bags=0;
@@ -127,6 +128,7 @@ public class Sim {
             if(bags>0){
                 for (int j=0; j<bags; j++) {
                     van.addBag();
+                    CASH--;
                 }
                 table.get(holder).clearBags();
             }
@@ -141,9 +143,11 @@ public class Sim {
 
         if(v!=null&&v.getType()=="Cash"){
             van.addBag();
+            CASH--;
         }
         if(e!=null&&e.getType()=="Cash"){
             van.addBag();
+            CASH--;
         }
     }
     public static void agentTurn(ArrayList<Card> vault, ArrayList<Card> alarm, Player player, Player other, Van van){
@@ -152,15 +156,19 @@ public class Sim {
         Card e=null;
 
         if(a.getType()=="LET'S GET MOVING"){
-            boolean cash=false;
-            int i=0;
-            while(cash=false){
-                Card card=vault.get(i);
-                if(card.getType()=="Cash"){
-                    vault.remove(i);
-                    cash=true;
+            if(CASH>0){
+                boolean cash=false;
+                int i=0;
+                while(cash==false){
+                    Card card=vault.get(i);
+                    if(card.getType()=="Cash"){
+                        vault.remove(i);
+                        van.addBag();
+                        CASH--;
+                        cash=true;
+                    }
+                    i++;
                 }
-                i++;
             }
         }else if(a.getType()=="I'LL TAKE THAT"){
             v=draw(vault);
@@ -191,15 +199,66 @@ public class Sim {
         }
     }
 
+    public static void takeTurn(Player player, ArrayList<Card> vault, ArrayList<Card> alarm, ArrayList<Player> table, Van van, int spot){
+        if(player.getRole()=="Crew"){
+            crewTurn(vault, alarm, table, van);
+        }else{
+            Player other=table.get(spot);
+            for(int i=0; i<table.size(); i++){
+                if(i!=spot&&table.get(i).getRole()=="Agent"){
+                    other=table.get(i);
+                }
+            }
+            agentTurn(vault, alarm, player, other, van);
+        }
+    }
     public static void main(String[] args) {
-        //If 5-6, 3 turns
-        //If 7-8, 2 turns
-        ArrayList<Card> vault=makeVault();
-        ArrayList<Card> alarm=makeAlarm();
-        ArrayList<Player> table=makeTable(5);
-        Van van=new Van();
+        int players=5;
+        int turns=0;
+        float tests=10;
+        int i=1;
+        int wins=0;
+        int bags=0;
+        int max=0;
+        long start=System.nanoTime();
+        while(i<=tests){
+            ArrayList<Card> vault=makeVault();
+            ArrayList<Card> alarm=makeAlarm();
+            ArrayList<Player> table=makeTable(5);
+            Van van=new Van();
 
-        crewTurn(vault, alarm, table, van);
-        System.out.println(van.getBags());
+            if(players==5||players==6){
+                turns=3;
+            }else if(players==7||players==8){
+                turns=2;
+            }
+            for(int j=0; j<turns; j++){
+                int spot=0;
+                for (Player player : table) {
+                    takeTurn(player, vault, alarm, table, van, spot);
+                    spot++;
+                }
+            }
+            if(van.getBags()>=5){
+                wins++;
+            }
+            if(van.getBags()==10){
+                max++;
+            }
+            bags+=van.getBags();
+            System.out.println(van.getBags()+" bags in van");
+            i++;
+        }
+        long end=System.nanoTime();
+        long elapsed=end-start;
+        long minutes = elapsed / (60 * 1000);
+        long seconds = (elapsed / 1000) % 60;
+        String str = String.format("%d:%02d", minutes, seconds);
+        float percent=(wins/tests)*100;
+        float avg=(bags/tests);
+
+        System.out.println("\n\nPlayers: "+players+"\nGames Played: "+tests+"\nTime Elapsed: "+str);
+        System.out.println("\n\nCrew won "+wins+" times ("+percent+"%).");
+        System.out.println(""+bags+" bags in van ("+avg+" bags/game) with all 10 bags "+max+" times.");
     }
 }
