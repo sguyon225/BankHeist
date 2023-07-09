@@ -22,7 +22,9 @@ public class Player {
         this.bags+=1;
     }
     public void removeBag(){
-        this.bags-=1;
+        if(bags>0){
+            this.bags-=1;
+        }   
     }
     public void clearBags(){
         this.bags=0;
