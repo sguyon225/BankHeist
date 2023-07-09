@@ -137,8 +137,45 @@ public class Sim {
             v=draw(vault);
         }
 
-        if(v.getType()=="Cash"){
+        if(v!=null&&v.getType()=="Cash"){
             van.addBag();
+        }
+        if(e!=null&&e.getType()=="Cash"){
+            van.addBag();
+        }
+    }
+    public static void agentTurn(ArrayList<Card> vault, ArrayList<Card> alarm, Player player, Player other, Van van){
+        Card a=draw(alarm);
+        Card v=null;
+        Card e=null;
+
+        if(a.getType()=="LET'S GET MOVING"){
+            boolean cash=false;
+            int i=0;
+            while(cash=false){
+                Card card=vault.get(i);
+                if(card.getType()=="Cash"){
+                    vault.remove(i);
+                    cash=true;
+                }
+                i++;
+            }
+        }else if(a.getType()=="I'LL TAKE THAT"){
+            v=draw(vault);
+            e=draw(vault);
+        }else{
+            v=draw(vault);
+        }
+
+        if(v!=null&&v.getType()=="Cash"){
+            player.addBag();
+        }else if(v!=null&&v.getType()=="Dye"){
+            other.removeBag();
+        }
+        if(e!=null&&e.getType()=="Cash"){
+            player.addBag();
+        }else if(e!=null&&e.getType()=="Dye"){
+            other.removeBag();
         }
     }
 
@@ -150,9 +187,7 @@ public class Sim {
         ArrayList<Player> table=makeTable(5);
         Van van=new Van();
 
-        table.get(0).addBag();
-        table.get(1).addBag();
-        table.get(1).addBag();
         crewTurn(vault, alarm, table, van);
+        System.out.println(van.getBags());
     }
 }
