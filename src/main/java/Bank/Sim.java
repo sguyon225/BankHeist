@@ -2,7 +2,10 @@ package Bank;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
+/*
+ * Not Accounted for:
+ *      Guilty Conscience attribute adding another agent + if it's taken away
+ */
 public class Sim {
     public static ArrayList<Card> makeVault(){
         ArrayList<Card> vault=new ArrayList<>(40);
@@ -118,7 +121,6 @@ public class Sim {
                         bags=player.getBags();
                         holder=i;
                     }
-                    
                 }
                 i++;
             }
@@ -170,7 +172,17 @@ public class Sim {
         if(v!=null&&v.getType()=="Cash"){
             player.addBag();
         }else if(v!=null&&v.getType()=="Dye"){
-            other.removeBag();
+            if(other.getBags()>0){
+                other.removeBag();
+            }else{
+                if(player.getCards()>0){
+                    player.removeCard();
+                    other.addCard();
+                }else if(player.getBags()>0){
+                    player.removeBag();
+                    other.addBag();
+                }
+            }            
         }
         if(e!=null&&e.getType()=="Cash"){
             player.addBag();
