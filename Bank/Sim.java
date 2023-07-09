@@ -3,6 +3,9 @@ package Bank;
 import java.util.Random;
 
 public class Sim {
+    static int VAULT=0;
+    static int ALARM=0;
+
     public static Card[] makeVault(){
         Card[] vault=new Card[40];
         for (int i=0; i<vault.length; i++) {
@@ -70,16 +73,30 @@ public class Sim {
         return alarm;
     }
 
+    public static Card draw(Card[] deck){
+        Card card=new Card();
+        if(deck.length==40){
+            for (int i=0; i<deck.length; i++) {
+                if(i==VAULT){
+                    card=deck[i];
+                }
+            }
+        }else{
+            for (int i=0; i<deck.length; i++) {
+                if(i==ALARM){
+                    card=deck[i];
+                }
+            }
+        }
+        return card;
+    }
+
     public static void main(String[] args) {
         //If 5-6, 3 turns
         //If 7-8, 2 turns
         Card[] vault=makeVault();
-        for (Card card : vault) {
-            System.out.println(card.getName());
-        }
         Card[] alarm=makeAlarm();
-        for (Card card : alarm) {
-            System.out.println(card.getName());
-        }
+        System.out.println(draw(vault).getName());
+        System.out.println(draw(alarm).getName());
     }
 }
