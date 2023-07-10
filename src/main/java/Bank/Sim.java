@@ -6,6 +6,7 @@ import java.util.Collections;
  * Not Accounted for:
  *      Guilty Conscience attribute adding another agent + if it's taken away
  *      If guilty Conc who does agent give/take cards from
+ *      make other cop be lowest cash
  */
 public class Sim {
     static int CASH=10;
@@ -44,14 +45,14 @@ public class Sim {
         int moving=0;
         while(moving<3){
             Card card=new Card();
-            card.setType("HOLD IT RIGHT THERE");
+            card.setType("LET'S GET MOVING");
             alarm.add(card);
             moving++;
         }
         int hold=0;
         while(hold<2){
             Card card=new Card();
-            card.setType("LET'S GET MOVING");
+            card.setType("HOLD IT RIGHT THERE");
             alarm.add(card);
             hold++;
         }
@@ -63,7 +64,7 @@ public class Sim {
             take++;
         }
         int none=0;
-        while(none<20){
+        while(none<18){
             Card card=new Card();
             alarm.add(card);
             none++;
@@ -163,13 +164,18 @@ public class Sim {
                     Card card=vault.get(i);
                     if(card.getType()=="Cash"){
                         vault.remove(i);
-                        van.addBag();
+                        other.addBag();
                         CASH--;
                         cash=true;
                     }
                     i++;
                 }
             }
+        }else if(a.getType()=="HOLD IT RIGHT THERE"){
+            if(player.cards()==0&&player.getBags()>0){
+                player.removeBag();
+                other.addBag();
+            }   
         }else if(a.getType()=="I'LL TAKE THAT"){
             v=draw(vault);
             e=draw(vault);
@@ -213,9 +219,9 @@ public class Sim {
         }
     }
     public static void main(String[] args) {
-        int players=8;
+        int players=5;
         int turns=0;
-        float tests=10000000;
+        float tests=1000000;
         int i=1;
         int wins=0;
         int bags=0;
