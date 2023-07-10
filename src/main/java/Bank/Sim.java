@@ -213,18 +213,18 @@ public class Sim {
         }
     }
     public static void main(String[] args) {
-        int players=5;
+        int players=8;
         int turns=0;
-        float tests=10;
+        float tests=10000000;
         int i=1;
         int wins=0;
         int bags=0;
         int max=0;
-        long start=System.nanoTime();
+        
         while(i<=tests){
             ArrayList<Card> vault=makeVault();
             ArrayList<Card> alarm=makeAlarm();
-            ArrayList<Player> table=makeTable(5);
+            ArrayList<Player> table=makeTable(players);
             Van van=new Van();
 
             if(players==5||players==6){
@@ -249,16 +249,11 @@ public class Sim {
             System.out.println(van.getBags()+" bags in van");
             i++;
         }
-        long end=System.nanoTime();
-        long elapsed=end-start;
-        long minutes = elapsed / (60 * 1000);
-        long seconds = (elapsed / 1000) % 60;
-        String str = String.format("%d:%02d", minutes, seconds);
         float percent=(wins/tests)*100;
         float avg=(bags/tests);
 
-        System.out.println("\n\nPlayers: "+players+"\nGames Played: "+tests+"\nTime Elapsed: "+str);
-        System.out.println("\n\nCrew won "+wins+" times ("+percent+"%).");
+        System.out.println("\n\nPlayers: "+players+"\nGames Played: 10,000,000");
+        System.out.println("\nCrew won "+wins+" times ("+percent+"%).");
         System.out.println(""+bags+" bags in van ("+avg+" bags/game) with all 10 bags "+max+" times.");
     }
 }
