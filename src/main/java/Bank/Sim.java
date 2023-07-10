@@ -5,8 +5,8 @@ import java.util.Collections;
 /*
  * Not Accounted for:
  *      Guilty Conscience attribute adding another agent + if it's taken away
- *      If guilty Conc who does agent give/take cards from
- *      make other cop be lowest cash
+ *      guilty will give all cash to cops
+ *      need attribute slot on players
  */
 public class Sim {
     static int CASH=10;
