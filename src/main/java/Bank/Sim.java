@@ -2,12 +2,7 @@ package Bank;
 
 import java.util.ArrayList;
 import java.util.Collections;
-/*
- * Not Accounted for:
- *      Guilty Conscience attribute adding another agent + if it's taken away
- *      guilty will give all cash to cops
- *      need attribute slot on players
- */
+
 public class Sim {
     static int CASH=10;
 
@@ -151,6 +146,7 @@ public class Sim {
             CASH--;
         }
     }
+    
     public static void agentTurn(ArrayList<Card> vault, ArrayList<Card> alarm, Player player, Player other, Van van){
         Card a=draw(alarm);
         Card v=null;
@@ -218,6 +214,7 @@ public class Sim {
             agentTurn(vault, alarm, player, other, van);
         }
     }
+    
     public static void main(String[] args) {
         int players=5;
         int turns=0;
